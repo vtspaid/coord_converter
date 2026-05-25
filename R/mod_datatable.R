@@ -32,7 +32,8 @@ mod_datatable_server <- function(id, r6, w){
                     extensions = c("Buttons"),
                     options = list(
                       select = TRUE,
-                      dom = "Bfrtip",
+                      dom = "rtpB",
+                      ordering = FALSE,      # Disables all column sorting and removes sort arrows
                       buttons = list(
                         list(
                           extend = "copy",

@@ -30,3 +30,23 @@ convert_coords <- function(x, from_x_name,
   x
 }
 
+
+#' helpers
+#'
+#' @description A fct function
+#'
+#' @param x A vector of column names
+#' @param y A vector of valid coordinate names
+#'
+#' @return The vector x, ordered so that if any valid coordinate names exist
+#' they are placed first.
+#'
+#' @noRd
+get_likely_columns <- function(x, y) {
+  index <- which(tolower(x) %in% y)
+  if (length(index > 0)) {
+    return(c(x[index], x[-index]))
+  } else {
+    return(x)
+  }
+}

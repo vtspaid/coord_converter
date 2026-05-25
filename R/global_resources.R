@@ -25,3 +25,7 @@ crs_list <- list(
   "WGS 84 / UTM zone 19N" = "EPSG:32619",
   "other"
 )
+
+x_coord_names <- c("longitude", "lon", "long", "x", "easting", "e")
+
+y_coord_names <- c("latitude", "lat", "y", "northing", "n")

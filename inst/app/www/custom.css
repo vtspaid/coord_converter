@@ -1,4 +1,17 @@
 
+/*
+.dt-button {
+    background-color: #d1d2e6;
+  color: pink; !important
+}*/
+
+.buttons-copy {
+  margin-top: 50px;
+  margin-left: 10px;
+  background-color: #d1d2e6 !important;
+  font-size: 11pt !important;
+}
+
 #sidebar-filename {
     padding: 5px;
   margin: 1px;
@@ -29,4 +42,9 @@
 .nav-tabs {
   margin-bottom: 10px;
   font-size: 13pt;
+}
+
+.progress-bar {
+    background-color: #d1d2e6;
+    color: black;
 }

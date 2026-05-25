@@ -11,15 +11,6 @@
 mod_sidebar_ui <- function(id) {
   ns <- NS(id)
   tagList(
-        # fluidRow(
-        #   col_5(shinyFiles::shinyFilesButton(ns("file_explorer"),
-        #                              "Select a File",
-        #                              "file selector",
-        #                              multiple = FALSE,
-        #                              style = "margin-bottom: 10px;")),
-        #   col_7(textOutput(ns("filename")))
-        # ),
-
         fileInput(ns("file_input"),
                   "Select a File",
                   accept = c(".xlsx", ".csv")),
@@ -46,56 +37,9 @@ mod_sidebar_server <- function(id, r6, file_trigger, convert_trigger){
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
-
-    gargoyle::init("test_trigger")
-
-    # From microsoft Copilot.
-    get_roots <- function() {
-      sys <- Sys.info()[["sysname"]]
-
-      if (sys == "Windows") {
-        # All available drive letters
-        drives <- system("wmic logicaldisk get name", intern = TRUE)
-        drives <- gsub("Name", "", drives)
-        drives <- trimws(drives)
-        drives <- drives[nchar(drives) > 0]
-
-        # Add user
-        drives <- c(paste0("C://users/", Sys.info()[["user"]], "/documents"), drives)
-        names(drives) <- drives
-
-        return(drives)
-      }
-
-      if (sys == "Darwin") {
-        # macOS
-        return(c(Home = "~", Volumes = "/Volumes"))
-      }
-
-      # Linux / Unix
-      c(Home = "~", Root = "/")
-    }
-
-    roots <- get_roots()
-
-    shinyFiles::shinyFileChoose(input,
-                                'file_explorer',
-                                session = session,
-                                roots = roots,
-                                filetypes=c('csv', 'xlsx'))
-
-    # observeEvent(input$file_explorer, {
-    #   fileinfo <- shinyFiles::parseFilePaths(roots, input$file_explorer)
-    #   r6$filepath <- as.character(fileinfo$datapath)
-    #   gargoyle::trigger("test_trigger")
-    # })
-
     observeEvent(input$file_input, {
-      r6$filepath <- input$file_input$datapath
-      gargoyle::trigger("test_trigger")
-    })
 
-    gargoyle::on("test_trigger", {
+      r6$filepath <- input$file_input$datapath
 
       if (length(r6$filepath) > 0 && file.exists(r6$filepath)) {
 
@@ -112,8 +56,11 @@ mod_sidebar_server <- function(id, r6, file_trigger, convert_trigger){
           which(is.na(colnames(r6$active_sheet)))
         ] <- "NA"
 
-        updateSelectInput(inputId = "from_x", choices = colnames(r6$active_sheet))
-        updateSelectInput(inputId = "from_y", choices = colnames(r6$active_sheet))
+        cols <- colnames(r6$active_sheet)
+        updateSelectInput(inputId = "from_x",
+                          choices = get_likely_columns(cols, x_coord_names))
+        updateSelectInput(inputId = "from_y",
+                          choices = get_likely_columns(cols, y_coord_names))
 
         r6$from_x_name <- input$from_x
         r6$from_y_name <- input$from_y
