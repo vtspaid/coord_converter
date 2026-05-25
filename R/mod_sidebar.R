@@ -7,17 +7,23 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
+#' @importFrom gargoyle watch
 mod_sidebar_ui <- function(id) {
   ns <- NS(id)
   tagList(
-        fluidRow(
-          col_5(shinyFiles::shinyFilesButton(ns("file_explorer"),
-                                     "Select a File",
-                                     "file selector",
-                                     multiple = FALSE,
-                                     style = "margin-bottom: 10px;")),
-          col_7(textOutput(ns("filename")))
-        ),
+        # fluidRow(
+        #   col_5(shinyFiles::shinyFilesButton(ns("file_explorer"),
+        #                              "Select a File",
+        #                              "file selector",
+        #                              multiple = FALSE,
+        #                              style = "margin-bottom: 10px;")),
+        #   col_7(textOutput(ns("filename")))
+        # ),
+
+        fileInput(ns("file_input"),
+                  "Select a File",
+                  accept = c(".xlsx", ".csv")),
+
         shinyjs::hidden(
           selectInput(ns("sheet"), "Select Sheet", choices = "")
         ),
@@ -40,6 +46,8 @@ mod_sidebar_server <- function(id, r6, file_trigger, convert_trigger){
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
+
+    gargoyle::init("test_trigger")
 
     # From microsoft Copilot.
     get_roots <- function() {
@@ -76,21 +84,36 @@ mod_sidebar_server <- function(id, r6, file_trigger, convert_trigger){
                                 roots = roots,
                                 filetypes=c('csv', 'xlsx'))
 
-    observeEvent(input$file_explorer, {
-      fileinfo <- shinyFiles::parseFilePaths(roots, input$file_explorer)
-      r6$filepath <- as.character(fileinfo$datapath)
+    # observeEvent(input$file_explorer, {
+    #   fileinfo <- shinyFiles::parseFilePaths(roots, input$file_explorer)
+    #   r6$filepath <- as.character(fileinfo$datapath)
+    #   gargoyle::trigger("test_trigger")
+    # })
+
+    observeEvent(input$file_input, {
+      r6$filepath <- input$file_input$datapath
+      gargoyle::trigger("test_trigger")
+    })
+
+    gargoyle::on("test_trigger", {
 
       if (length(r6$filepath) > 0 && file.exists(r6$filepath)) {
-        r6$wb <- openxlsx2::wb_load(r6$filepath)
 
-        r6$active_sheet <- openxlsx2::wb_data(r6$wb, sheet = 1)
+        if (tools::file_ext(r6$filepath) == "xlsx") {
+          r6$wb <- openxlsx2::wb_load(r6$filepath)
+
+          r6$active_sheet <- openxlsx2::wb_data(r6$wb, sheet = 1)
+          updateSelectInput(inputId = "sheet", choices = r6$wb$get_sheet_names())
+        } else {
+          r6$active_sheet <- readr::read_csv(r6$filepath)
+        }
+
         colnames(r6$active_sheet)[
           which(is.na(colnames(r6$active_sheet)))
-          ] <- "NA"
+        ] <- "NA"
 
         updateSelectInput(inputId = "from_x", choices = colnames(r6$active_sheet))
         updateSelectInput(inputId = "from_y", choices = colnames(r6$active_sheet))
-        updateSelectInput(inputId = "sheet", choices = r6$wb$get_sheet_names())
 
         r6$from_x_name <- input$from_x
         r6$from_y_name <- input$from_y
@@ -150,7 +173,14 @@ mod_sidebar_server <- function(id, r6, file_trigger, convert_trigger){
     })
 
     observeEvent(input$convert, {
-      r6$active_sheet <- openxlsx2::wb_data(r6$wb, sheet = input$sheet)
+
+      if (tools::file_ext(r6$filepath) == "xlsx") {
+        r6$wb <- openxlsx2::wb_load(r6$filepath)
+        r6$active_sheet <- openxlsx2::wb_data(r6$wb, sheet = input$sheet)
+      } else {
+        r6$active_sheet <- readr::read_csv(r6$filepath)
+      }
+
       colnames(r6$active_sheet)[
         which(is.na(colnames(r6$active_sheet)))
       ] <- "NA"
