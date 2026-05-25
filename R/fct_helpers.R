@@ -31,7 +31,7 @@ convert_coords <- function(x, from_x_name,
 }
 
 
-#' helpers
+#' get_likely_columns
 #'
 #' @description A fct function
 #'
@@ -49,4 +49,33 @@ get_likely_columns <- function(x, y) {
   } else {
     return(x)
   }
+}
+
+#' guess_crs
+#'
+#' @description A fct function
+#'
+#' @param x A two column data frame of coordinates where column one is x and
+#' column two is y
+#'
+#' @return Suggested from and to CRSs
+#'
+#' @noRd
+guess_crs <- function(x) {
+  vals <- unlist(x)
+  vals <- vals[!is.na(vals)]
+  if (sum(vals >= -180 & vals <=180) == length(vals)) {
+    from_crs <- "EPSG:4326"
+
+    test_point <- na.omit(x)[1, 1]
+    zone <- floor((test_point + 180) / 6) + 1
+    to_crs <- paste0("EPSG:269", zone)
+  } else {
+    from_crs <- "unknown"
+    to_crs <- "unknown"
+  }
+
+  return(list(from_crs = from_crs,
+              to_crs = to_crs))
+
 }

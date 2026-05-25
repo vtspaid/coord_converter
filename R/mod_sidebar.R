@@ -57,10 +57,11 @@ mod_sidebar_server <- function(id, r6, file_trigger, convert_trigger){
         ] <- "NA"
 
         cols <- colnames(r6$active_sheet)
-        updateSelectInput(inputId = "from_x",
-                          choices = get_likely_columns(cols, x_coord_names))
-        updateSelectInput(inputId = "from_y",
-                          choices = get_likely_columns(cols, y_coord_names))
+        x_cols <- get_likely_columns(cols, x_coord_names)
+        y_cols <- get_likely_columns(cols, y_coord_names)
+
+        updateSelectInput(inputId = "from_x", choices = x_cols)
+        updateSelectInput(inputId = "from_y", choices = y_cols)
 
         r6$from_x_name <- input$from_x
         r6$from_y_name <- input$from_y
@@ -69,11 +70,26 @@ mod_sidebar_server <- function(id, r6, file_trigger, convert_trigger){
         r6$from_crs <- input$from_crs
         r6$to_crs <- input$to_crs
 
+        try ({
+          crs_guess <- guess_crs(
+            as.data.frame(r6$active_sheet)[, c(x_cols[1], y_cols[1])]
+            )
+
+          if (crs_guess$from_crs != "unknown") {
+            updateSelectInput(inputId = "from_crs",
+                              selected = crs_guess$from_crs)
+            updateSelectInput(inputId = "to_crs",
+                              selected = crs_guess$to_crs)
+          }
+          r6$from_crs <- crs_guess$from_crs
+          r6$to_crs <- crs_guess$to_crs
+        })
+
         gargoyle::trigger(file_trigger)
       }
     })
 
-    # show or hide the sheet input based on file extension
+    # Show or hide the sheet input based on file extension
     gargoyle::on(file_trigger, {
       if(tools::file_ext(r6$filepath) == "xlsx") {
         shinyjs::show("sheet")
