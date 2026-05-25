@@ -1,3 +1,13 @@
+
+#sidebar-filename {
+    padding: 5px;
+  margin: 1px;
+  width:100%;
+  border: none;
+  vertical-align: center;
+  padding-left: 10px;
+}
+
 .myheader {
   /* background-color: #6de38c;  */
   background-color: #d1d2e6;

@@ -10,21 +10,21 @@
 mod_sidebar_ui <- function(id) {
   ns <- NS(id)
   tagList(
-        shinyFiles::shinyFilesButton(ns("file_explorer"),
+        fluidRow(
+          col_5(shinyFiles::shinyFilesButton(ns("file_explorer"),
                                      "Select a File",
                                      "file selector",
                                      multiple = FALSE,
-                                     style = "margin-bottom: 10px;"),
+                                     style = "margin-bottom: 10px;")),
+          col_7(textOutput(ns("filename")))
+        ),
         selectInput(ns("from_x"), "x/Longitude column", choices = ""),
         selectInput(ns("from_y"), "y/Latitude column", choices = ""),
         selectInput(ns("from_crs"), "Current CRS", choices = crs_list),
         selectInput(ns("to_crs"), "New CRS", choices = crs_list),
         textInput(ns("to_x"), "new x name", "x"),
         textInput(ns("to_y"), "new y name", "y"),
-        fluidRow(
-          col_6(actionButton(ns("copy"), "Copy Results")),
-          col_6(actionButton(ns("convert"), "Convert Coords"))
-        )
+        actionButton(ns("convert"), "Convert Coords")
     )
 }
 
@@ -32,7 +32,7 @@ mod_sidebar_ui <- function(id) {
 #'
 #' @noRd
 mod_sidebar_server <- function(id, r6, file_trigger, convert_trigger){
-  moduleServer(id, function(input, output, session){
+  moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
 
@@ -85,17 +85,23 @@ mod_sidebar_server <- function(id, r6, file_trigger, convert_trigger){
 
         updateSelectInput(inputId = "from_x", choices = colnames(r6$active_sheet))
         updateSelectInput(inputId = "from_y", choices = colnames(r6$active_sheet))
+
+        r6$from_x_name <- input$from_x
+        r6$from_y_name <- input$from_y
+        r6$to_x_name <- input$to_x
+        r6$to_y_name <- input$to_y
+        r6$from_crs <- input$from_crs
+        r6$to_crs <- input$to_crs
+
+        gargoyle::trigger(file_trigger)
       }
+    })
 
-      r6$from_x_name <- input$from_x
-      r6$from_y_name <- input$from_y
-      r6$to_x_name <- input$to_x
-      r6$to_y_name <- input$to_y
-      r6$from_crs <- input$from_crs
-      r6$to_crs <- input$to_crs
-
-      golem::cat_dev("trigger file_trigger\n")
-      gargoyle::trigger(file_trigger)
+    # Print file name
+    output$filename <- renderText({
+      gargoyle::watch(file_trigger)
+      req(r6$filepath)
+      basename(r6$filepath)
     })
 
     observeEvent(input$from_x, {
