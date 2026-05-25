@@ -5,8 +5,13 @@
 #' @return The return value, if any, from executing the function.
 #'
 #' @noRd
-convert_coords <- function(x, from_x_name, from_y_name, from_crs, to_crs,
-                           to_x_name, to_y_name) {
+convert_coords <- function(x, from_x_name,
+                           from_y_name,
+                           from_crs,
+                           to_crs,
+                           to_x_name,
+                           to_y_name,
+                           decimals) {
   x <- as.data.frame(x)
 
   if (to_x_name %in% colnames(x) || to_y_name %in% colnames(x)) {
@@ -20,8 +25,8 @@ convert_coords <- function(x, from_x_name, from_y_name, from_crs, to_crs,
   coords <- terra::project(coords, to_crs)
   coords <- as.data.frame(coords, geom = "XY")
 
-  x[to_x_name] <- coords$x
-  x[to_y_name] <- coords$y
+  x[to_x_name] <- round(coords$x, decimals)
+  x[to_y_name] <- round(coords$y, decimals)
   x
 }
 
