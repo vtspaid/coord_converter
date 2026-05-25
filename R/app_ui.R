@@ -23,7 +23,10 @@ app_ui <- function(request) {
                    sidebarPanel(
                      mod_sidebar_ui("sidebar")
                    ), # End sidebar
-                   mainPanel() # MainPanel
+
+                   mainPanel(
+                     mod_datatable_ui("datatable")
+                   ) # MainPanel
                  )
         ), # End of first tab panel
 

@@ -31,9 +31,10 @@ mod_sidebar_ui <- function(id) {
 #' sidebar Server Functions
 #'
 #' @noRd
-mod_sidebar_server <- function(id){
+mod_sidebar_server <- function(id, r6, file_trigger, convert_trigger){
   moduleServer(id, function(input, output, session){
     ns <- session$ns
+
 
     # From microsoft Copilot.
     get_roots <- function() {
@@ -69,6 +70,76 @@ mod_sidebar_server <- function(id){
                                 session = session,
                                 roots = roots,
                                 filetypes=c('csv', 'xlsx'))
+
+    observeEvent(input$file_explorer, {
+      fileinfo <- shinyFiles::parseFilePaths(roots, input$file_explorer)
+      r6$filepath <- as.character(fileinfo$datapath)
+
+      if (length(r6$filepath) > 0 && file.exists(r6$filepath)) {
+        r6$wb <- openxlsx2::wb_load(r6$filepath)
+
+        r6$active_sheet <- openxlsx2::wb_data(r6$wb)
+        colnames(r6$active_sheet)[
+          which(is.na(colnames(r6$active_sheet)))
+          ] <- "NA"
+
+        updateSelectInput(inputId = "from_x", choices = colnames(r6$active_sheet))
+        updateSelectInput(inputId = "from_y", choices = colnames(r6$active_sheet))
+      }
+
+      r6$from_x_name <- input$from_x
+      r6$from_y_name <- input$from_y
+      r6$to_x_name <- input$to_x
+      r6$to_y_name <- input$to_y
+      r6$from_crs <- input$from_crs
+      r6$to_crs <- input$to_crs
+
+      golem::cat_dev("trigger file_trigger\n")
+      gargoyle::trigger(file_trigger)
+    })
+
+    observeEvent(input$from_x, {
+      r6$from_x_name <- input$from_x
+    })
+
+    observeEvent(input$from_y, {
+      r6$from_y_name <- input$from_y
+    })
+
+    observeEvent(input$to_x, {
+      r6$to_x_name <- input$to_x
+    })
+
+    observeEvent(input$to_y, {
+      r6$to_y_name <- input$to_y
+    })
+
+    observeEvent(input$from_crs, {
+      r6$from_crs <- input$from_crs
+    })
+
+    observeEvent(input$to_crs, {
+      r6$to_crs <- input$to_crs
+    })
+
+    observeEvent(input$convert, {
+      r6$active_sheet <- openxlsx2::wb_data(r6$wb)
+      colnames(r6$active_sheet)[
+        which(is.na(colnames(r6$active_sheet)))
+      ] <- "NA"
+
+      r6$active_sheet <- convert_coords(r6$active_sheet,
+                                        r6$from_x_name,
+                                        r6$from_y_name,
+                                        r6$from_crs,
+                                        r6$to_crs,
+                                        r6$to_x_name,
+                                        r6$to_y_name)
+      gargoyle::trigger(file_trigger)
+      gargoyle::trigger(convert_trigger)
+      golem::cat_dev("convert_trigger triggered\n")
+    })
+
   })
 }
 
