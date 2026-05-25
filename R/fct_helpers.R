@@ -18,15 +18,17 @@ convert_coords <- function(x, from_x_name,
     stop("new x or y names are not unique")
   }
 
+
   coords <- x[, c(from_x_name, from_y_name)]
+  index <- which(complete.cases(coords))
   coords <- terra::vect(coords,
                         geom = c(from_x_name, from_y_name),
                         crs = from_crs)
   coords <- terra::project(coords, to_crs)
   coords <- as.data.frame(coords, geom = "XY")
 
-  x[to_x_name] <- round(coords$x, decimals)
-  x[to_y_name] <- round(coords$y, decimals)
+  x[index, to_x_name] <- round(coords$x, decimals)
+  x[index, to_y_name] <- round(coords$y, decimals)
   x
 }
 

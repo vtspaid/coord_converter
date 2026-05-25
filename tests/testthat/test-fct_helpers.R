@@ -19,6 +19,23 @@ test_that("convert_coords works", {
   expect_equal(round(test_result$y), c(4405648, 4339055, 4427848, 4406858))
 })
 
+test_that("convert_coords works with NAs", {
+  test_wb <- openxlsx2::wb_load(data_path)
+  test_data <- openxlsx2::wb_data(test_wb, sheet = 2)
+  test_result <- convert_coords(test_data,
+                                "Long",
+                                "Lat",
+                                "EPSG:4326",
+                                "EPSG:26917",
+                                "x",
+                                "y",
+                                0)
+
+  expect_equal(test_result$x, c(642301, 555936, NA, 606505))
+
+  expect_equal(test_result$y, c(4339055, 4337961, NA, 4428503))
+})
+
 test_that("get_likely_columns works", {
   test_wb <- openxlsx2::wb_load(data_path)
   df <- openxlsx2::wb_data(test_wb, sheet = 1)
