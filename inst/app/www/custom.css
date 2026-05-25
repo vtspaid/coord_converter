@@ -1,0 +1,22 @@
+.myheader {
+  /* background-color: #6de38c;  */
+  background-color: #d1d2e6;
+  padding: 2px 0px 2px 0px;
+  margin: -11px -15px 15px -15px;
+  border-bottom: 2px solid #b8b9d4;
+}
+
+.myheader h2 {
+  font-weight: bold;
+  font-family: Georgia, serif;
+  letter-spacing: 1px;
+  font-size: 25pt;
+  margin-left: 15px;
+  text-align:left;
+}
+
+
+.nav-tabs {
+  margin-bottom: 10px;
+  font-size: 13pt;
+}

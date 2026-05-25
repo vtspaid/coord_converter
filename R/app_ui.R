@@ -10,7 +10,28 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic
     fluidPage(
-      golem::golem_welcome_page() # Remove this line to start building your UI
+
+      # App Header ----
+      div(class = "myheader",
+     titlePanel("Coordinate Converter")
+      ),
+
+      tabsetPanel(
+        tabPanel("Convert Coordinates",
+
+                 sidebarLayout(
+                   sidebarPanel(
+                     mod_sidebar_ui("sidebar")
+                   ), # End sidebar
+                   mainPanel() # MainPanel
+                 )
+        ), # End of first tab panel
+
+        tabPanel("Information and Disclaimer",
+                 #TODO
+               h2("put info and disclaimer here")
+        ) # End of second tab panel
+      )
     )
   )
 }
