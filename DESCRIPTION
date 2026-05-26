@@ -7,6 +7,7 @@ Description: Convert coordinates of of an excel sheet or csv to differnt units.
 License: MIT + file LICENSE
 Imports: 
     config,
+    covr,
     DT,
     gargoyle,
     golem,

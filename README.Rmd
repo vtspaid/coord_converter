@@ -23,7 +23,7 @@ output: github_document
 
 You can install the development version of `{coordconvert}` like so:
 
-```{r}
+```{r, include = FALSE}
 if (!require("remotes")) install.packages("remotes")
 remotes::install_git("https://github.com/vtspaid/coord_converter")
 ```
