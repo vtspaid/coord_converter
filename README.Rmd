@@ -19,6 +19,8 @@ output: github_document
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
+The online version can be found [here](https://firefly-coord-converter.share.connect.posit.cloud")
+
 ## Installation
 
 You can install the development version of `{coordconvert}` like so:

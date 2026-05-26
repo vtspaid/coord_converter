@@ -20,7 +20,7 @@ convert_coords <- function(x, from_x_name,
 
 
   coords <- x[, c(from_x_name, from_y_name)]
-  index <- which(complete.cases(coords))
+  index <- which(stats::complete.cases(coords))
   coords <- terra::vect(coords,
                         geom = c(from_x_name, from_y_name),
                         crs = from_crs)
@@ -69,7 +69,7 @@ guess_crs <- function(x) {
   if (sum(vals >= -180 & vals <=180) == length(vals)) {
     from_crs <- "EPSG:4326"
 
-    test_point <- na.omit(x)[1, 1]
+    test_point <- stats::na.omit(x)[1, 1]
     zone <- floor((test_point + 180) / 6) + 1
     to_crs <- paste0("EPSG:269", zone)
   } else {
