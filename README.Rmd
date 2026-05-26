@@ -23,7 +23,7 @@ output: github_document
 
 You can install the development version of `{coordconvert}` like so:
 
-```{r, include = FALSE}
+```{r, eval = FALSE}
 if (!require("remotes")) install.packages("remotes")
 remotes::install_git("https://github.com/vtspaid/coord_converter")
 ```
@@ -49,7 +49,7 @@ paste0(R.home(), "/bin/R.exe")
 ```
 
 Then paste that result with quotation marks into a .bat file on windows or a .sh 
-file on Mac or Linux. Then add `-e "coordconvert::run_app(options = list(launch.browser = TRUE))" to same line.
+file on Mac or Linux. Then add `-e "coordconvert::run_app(options = list(launch.browser = TRUE))"` to same line.
 
 So the final file will have a line similar to this, however the first portion
 will be different depending on the result of R.home()

@@ -13,6 +13,11 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 
 You can install the development version of `{coordconvert}` like so:
 
+``` r
+if (!require("remotes")) install.packages("remotes")
+remotes::install_git("https://github.com/vtspaid/coord_converter")
+```
+
 ## Run
 
 You can launch the application by running:
@@ -37,9 +42,9 @@ paste0(R.home(), "/bin/R.exe")
 ```
 
 Then paste that result with quotation marks into a .bat file on windows
-or a .sh file on Mac or Linux. Then add \`-e
-“coordconvert::run_app(options = list(launch.browser = TRUE))” to same
-line.
+or a .sh file on Mac or Linux. Then add
+`-e "coordconvert::run_app(options = list(launch.browser = TRUE))"` to
+same line.
 
 So the final file will have a line similar to this, however the first
 portion will be different depending on the result of R.home()
@@ -59,14 +64,54 @@ This README has been compiled on the
 
 ``` r
 Sys.time()
-#> [1] "2026-05-25 20:00:59 EDT"
+#> [1] "2026-05-25 20:17:52 EDT"
 ```
 
 Here are the tests results and package coverage:
 
 ``` r
 devtools::check(quiet = TRUE)
-#> Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]): namespace 'fastmap' 1.1.1 is already loaded, but >= 1.2.0 is required
+#> ℹ Loading coordconvert
+#> ── R CMD check results ──────────────────────────── coordconvert 0.0.0.9000 ────
+#> Duration: 38.4s
+#> 
+#> ❯ checking for portable file names ... WARNING
+#>   Found the following file with a non-portable file name:
+#>     tests/testthat/data/.~lock.coord_test.xlsx#
+#>   These are not fully portable file names.
+#>   See section 'Package structure' in the 'Writing R Extensions' manual.
+#> 
+#> ❯ checking for hidden files and directories ... NOTE
+#>   Found the following hidden files and directories:
+#>     tests/testthat/data/.~lock.coord_test.xlsx#
+#>   These were most likely included in error. See section 'Package
+#>   structure' in the 'Writing R Extensions' manual.
+#> 
+#> ❯ checking top-level files ... NOTE
+#>   Non-standard file/directory found at top level:
+#>     'manifest.json'
+#> 
+#> ❯ checking package subdirectories ... NOTE
+#>   Problems with news in 'NEWS.md':
+#>   No news entries found.
+#> 
+#> ❯ checking dependencies in R code ... NOTE
+#>   Namespaces in Imports field not imported from:
+#>     'covr' 'pkgload' 'shinyFiles'
+#>     All declared Imports should be used.
+#> 
+#> ❯ checking R code for possible problems ... NOTE
+#>   convert_coords: no visible global function definition for
+#>     'complete.cases'
+#>   guess_crs: no visible global function definition for 'na.omit'
+#>   Undefined global functions or variables:
+#>     complete.cases na.omit
+#>   Consider adding
+#>     importFrom("stats", "complete.cases", "na.omit")
+#>   to your NAMESPACE file.
+#> 
+#> 0 errors ✔ | 1 warning ✖ | 5 notes ✖
+#> Error: R CMD check found WARNINGs
 ```
 
 ``` r
