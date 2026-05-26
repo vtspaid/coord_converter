@@ -10,7 +10,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 <!-- badges: end -->
 
 The online version can be found
-[here](https://firefly-coord-converter.share.connect.posit.cloud%22)
+[here](https://firefly-coord-converter.share.connect.posit.cloud)
 
 ## Installation
 
@@ -67,7 +67,7 @@ This README has been compiled on the
 
 ``` r
 Sys.time()
-#> [1] "2026-05-25 20:27:12 EDT"
+#> [1] "2026-05-25 20:31:56 EDT"
 ```
 
 Here are the tests results and package coverage:
@@ -76,7 +76,7 @@ Here are the tests results and package coverage:
 devtools::check(quiet = TRUE)
 #> ℹ Loading coordconvert
 #> ── R CMD check results ──────────────────────────── coordconvert 0.0.0.9000 ────
-#> Duration: 32.2s
+#> Duration: 32s
 #> 
 #> ❯ checking package subdirectories ... NOTE
 #>   Problems with news in 'NEWS.md':
